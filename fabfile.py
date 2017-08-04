@@ -45,10 +45,7 @@ def syncdb():
 
 def schema(initial=False):
     """Create a schema migration for any changes."""
-    if initial:
-        _local('django-admin.py schemamigration %s --initial' % APP_NAME)
-    else:
-        _local('django-admin.py schemamigration %s --auto' % APP_NAME)
+    _local('django-admin.py makemigrations %s' % APP_NAME)
 
 
 def migrate(migration=''):

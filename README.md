@@ -9,7 +9,9 @@ Affect is a flagging engine which applies a flag value to requests based on defi
 Installing
 ----------
 
-Affect has been tested and working with Django 1.4, 1.5, and 1.6, and requires django-extensions.
+Affect has been tested and working with Django 1.8 requires django-extensions.
+
+For support for Django 1.4, 1.5, 1.6 use version 1.1.0
 
 Install from [github](https://github.com/ConsumerAffairs/django-affect) with pip:
 
@@ -93,7 +95,9 @@ Affect core functionality is broken into two models Criteria and Flags. Criteria
 
 In Affect, Flags are the primary indicator of whether action should be taken by your code. Passing the `flag_is_affected` function the request object and flag name will tell you if the flag is enabled for this request.
 
-    from affect import flag_is_affected
+Due to compatibility issues with later versions of Django, the convenience import path for `affect.flag_is_affected` no longer exists and you must import from `affect.utils.flag_is_affected`.
+
+    from affect.utils import flag_is_affected
 
     def sample_view(request):
         if flag_is_affected(request, 'template_rev_b'):

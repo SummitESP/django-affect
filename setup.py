@@ -4,16 +4,16 @@ from setuptools import setup
 
 setup(
     name='django-affect',
-    version='1.1.0',
+    version='1.5.0',
     description='Request flagging engine inspired by django-waffle',
     author='Jeremy Sattefield',
-    author_email='jsatterfield@consumeraffairs.com',
-    url='https://github.com/ConsumerAffairs/django-affect',
+    author_email='jsatt@jsatt.com',
+    url='https://github.com/jsatt/django-affect',
     #license='',
     packages=[
         'affect', 'affect.migrations'],
     install_requires=[
-        'Django>=1.4',
+        'Django>=1.8',
         'django-extensions'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

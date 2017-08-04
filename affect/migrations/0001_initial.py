@@ -1,169 +1,70 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import migrations, models
+import django.utils.timezone
+from django.conf import settings
+import django_extensions.db.fields.json
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Flag'
-        db.create_table(u'affect_flag', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=50)),
-            ('active', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('priority', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, db_index=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-        ))
-        db.send_create_signal(u'affect', ['Flag'])
+    dependencies = [
+        ('auth', '0006_require_contenttypes_0002'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Adding M2M table for field conflicts on 'Flag'
-        db.create_table(u'affect_flag_conflicts', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('from_flag', models.ForeignKey(orm[u'affect.flag'], null=False)),
-            ('to_flag', models.ForeignKey(orm[u'affect.flag'], null=False))
-        ))
-        db.create_unique(u'affect_flag_conflicts', ['from_flag_id', 'to_flag_id'])
-
-        # Adding model 'Criteria'
-        db.create_table(u'affect_criteria', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=50)),
-            ('persistent', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('everyone', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('percent', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=3, decimal_places=1, blank=True)),
-            ('testing', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('superusers', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('staff', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('authenticated', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('device_type', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('entry_url', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
-            ('referrer', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
-            ('query_args', self.gf('django.db.models.fields.TextField')(default='{}', null=True, blank=True)),
-            ('max_cookie_age', self.gf('django.db.models.fields.IntegerField')(default=0, null=True, blank=True)),
-            ('note', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, db_index=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-        ))
-        db.send_create_signal(u'affect', ['Criteria'])
-
-        # Adding M2M table for field flags on 'Criteria'
-        db.create_table(u'affect_criteria_flags', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('criteria', models.ForeignKey(orm[u'affect.criteria'], null=False)),
-            ('flag', models.ForeignKey(orm[u'affect.flag'], null=False))
-        ))
-        db.create_unique(u'affect_criteria_flags', ['criteria_id', 'flag_id'])
-
-        # Adding M2M table for field groups on 'Criteria'
-        db.create_table(u'affect_criteria_groups', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('criteria', models.ForeignKey(orm[u'affect.criteria'], null=False)),
-            ('group', models.ForeignKey(orm[u'auth.group'], null=False))
-        ))
-        db.create_unique(u'affect_criteria_groups', ['criteria_id', 'group_id'])
-
-        # Adding M2M table for field users on 'Criteria'
-        db.create_table(u'affect_criteria_users', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('criteria', models.ForeignKey(orm[u'affect.criteria'], null=False)),
-            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
-        ))
-        db.create_unique(u'affect_criteria_users', ['criteria_id', 'user_id'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Flag'
-        db.delete_table(u'affect_flag')
-
-        # Removing M2M table for field conflicts on 'Flag'
-        db.delete_table('affect_flag_conflicts')
-
-        # Deleting model 'Criteria'
-        db.delete_table(u'affect_criteria')
-
-        # Removing M2M table for field flags on 'Criteria'
-        db.delete_table('affect_criteria_flags')
-
-        # Removing M2M table for field groups on 'Criteria'
-        db.delete_table('affect_criteria_groups')
-
-        # Removing M2M table for field users on 'Criteria'
-        db.delete_table('affect_criteria_users')
-
-
-    models = {
-        u'affect.criteria': {
-            'Meta': {'object_name': 'Criteria'},
-            'authenticated': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
-            'device_type': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'entry_url': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
-            'everyone': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
-            'flags': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['affect.Flag']", 'null': 'True', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'max_cookie_age': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'name': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
-            'note': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'percent': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '3', 'decimal_places': '1', 'blank': 'True'}),
-            'persistent': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'query_args': ('django.db.models.fields.TextField', [], {'default': "'{}'", 'null': 'True', 'blank': 'True'}),
-            'referrer': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
-            'staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'superusers': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'testing': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'users': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        u'affect.flag': {
-            'Meta': {'object_name': 'Flag'},
-            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'conflicts': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'conflicts_rel_+'", 'null': 'True', 'to': u"orm['affect.Flag']"}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'name': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
-            'priority': ('django.db.models.fields.IntegerField', [], {'default': '0'})
-        },
-        u'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        u'auth.permission': {
-            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        u'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        }
-    }
-
-    complete_apps = ['affect']
+    operations = [
+        migrations.CreateModel(
+            name='Criteria',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.SlugField(help_text=b'Name used when storing cookie for criteria decisions.', unique=True)),
+                ('persistent', models.BooleanField(default=False, help_text=b'This criteria is persistant to the user, and a cookie will be set. Set off to evaluate criteria for user on each request.')),
+                ('max_cookie_age', models.IntegerField(default=2592000, help_text=b'If this criteria is persistant, this is the amount of time in seconds before the cookie should expire. 0 or blank expires at end of browser session.', null=True, blank=True)),
+                ('everyone', models.NullBooleanField(help_text=b'Turn criteria on (True) or off (False) for all users. Overrides ALL other criteria.')),
+                ('testing', models.BooleanField(default=False, help_text=b'Allow this criteria to be set for a session for user testing.')),
+                ('percent', models.DecimalField(help_text=b'A number between 0.0 and 99.9 to indicate a percentage of users for whom flags will be active.', null=True, max_digits=3, decimal_places=1, blank=True)),
+                ('superusers', models.BooleanField(default=True, help_text=b'Activate this criteria for superusers?')),
+                ('staff', models.BooleanField(default=False, help_text=b'Activate this criteria for staff?')),
+                ('authenticated', models.BooleanField(default=False, help_text=b'Activate this criteria for authenticate users?')),
+                ('device_type', models.IntegerField(default=0, help_text=b"Activate this criteria for users using certain classes of device. (NOTICE: This is only an attempt as device detection is hard and generally a bad idea. If you're doing something client-side, use css and js feature detection instead)", choices=[(0, b'Unknown'), (1, b'Desktop'), (2, b'Mobile'), (4, b'Dumb Phone')])),
+                ('entry_url', models.TextField(default=b'', help_text=b'Activate this criteria for users who enter on one of these urls (comma separated list)', blank=True)),
+                ('referrer', models.TextField(default=b'', help_text=b'Activate this criteria for users who entered from one of these domains (comma separated list)', blank=True)),
+                ('query_args', django_extensions.db.fields.json.JSONField(default=None, help_text=b'Dictionary of key value pairs to expect in the querystring.(ie. {"foo": "bar"} matches ?foo=bar; {"foo": "*"} matches ?foo=<any value>; {"foo": ["bar", "baz"] matches ?foo=bar or ?foo=baz)', null=True, blank=True)),
+                ('note', models.TextField(help_text=b'Note where this criteria is used.', blank=True)),
+                ('created', models.DateTimeField(default=django.utils.timezone.now, help_text=b'Date when this criteria was created.', editable=False, db_index=True)),
+                ('modified', models.DateTimeField(default=django.utils.timezone.now, help_text=b'Date when this criteria was last modified.', editable=False)),
+            ],
+            options={
+                'verbose_name_plural': 'criteria',
+            },
+        ),
+        migrations.CreateModel(
+            name='Flag',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.SlugField(help_text=b'Key that will be attached to the request', unique=True)),
+                ('active', models.BooleanField(default=True)),
+                ('priority', models.IntegerField(default=0, help_text=b'If flag conflicts with other flags, highest priority is applied (0 - low priority, 100 - high priority)')),
+                ('created', models.DateTimeField(default=django.utils.timezone.now, help_text=b'Date when this flag was created.', editable=False, db_index=True)),
+                ('modified', models.DateTimeField(default=django.utils.timezone.now, help_text=b'Date when this flag was last modified.', editable=False)),
+                ('conflicts', models.ManyToManyField(help_text=b'Other flags that this flag conflicts with, highest priority is applied.', related_name='_flag_conflicts_+', to='affect.Flag', blank=True)),
+            ],
+        ),
+        migrations.AddField(
+            model_name='criteria',
+            name='flags',
+            field=models.ManyToManyField(help_text=b'Flags to activate when this criteria is True.', to='affect.Flag', blank=True),
+        ),
+        migrations.AddField(
+            model_name='criteria',
+            name='groups',
+            field=models.ManyToManyField(help_text=b'Activate this criteria for these user groups.', to='auth.Group', blank=True),
+        ),
+        migrations.AddField(
+            model_name='criteria',
+            name='users',
+            field=models.ManyToManyField(help_text=b'Activate this criteria for these users.', to=settings.AUTH_USER_MODEL, blank=True),
+        ),
+    ]

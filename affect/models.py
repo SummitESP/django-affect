@@ -13,7 +13,7 @@ class Flag(models.Model):
         help_text='Key that will be attached to the request')
     active = models.BooleanField(default=True)
     conflicts = models.ManyToManyField(
-        'self', blank=True, null=True,
+        'self', blank=True,
         help_text='Other flags that this flag conflicts with, highest priority'
         ' is applied.')
     priority = models.IntegerField(
@@ -40,7 +40,7 @@ class Criteria(models.Model):
         unique=True,
         help_text='Name used when storing cookie for criteria decisions.')
     flags = models.ManyToManyField(
-        Flag, blank=True, null=True,
+        Flag, blank=True,
         help_text='Flags to activate when this criteria is True.')
     persistent = models.BooleanField(
         default=False,

@@ -19,7 +19,6 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_nose',
@@ -40,8 +39,3 @@ NOSE_ARGS = ('--nocapture', )
 SOUTH_TESTS_MIGRATE = False
 CACHES = dict(
     default=dict(BACKEND='django.core.cache.backends.dummy.DummyCache'))
-
-import sys
-if 'migrate' in sys.argv or 'schemamigration' in sys.argv or (
-        'syncdb' in sys.argv):
-    INSTALLED_APPS += ('south',)

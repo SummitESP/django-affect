@@ -1,6 +1,6 @@
 pip>=0.8.2
 South
-Django>=1.4
+Django>=1.8
 django-extensions
 
 # install these if you intend to develop
